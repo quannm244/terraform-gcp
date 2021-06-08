@@ -22,23 +22,23 @@ module "vpc" {
 
 module "subnets" {
     source  = "./modules/network/subnets"
-    project_id   = "ivory-bonus-314308"
+    project_id   = var.project_id
     network_name = "new-network"
     subnets = [
         {
             subnet_name           = "subnet-01"
             subnet_ip             = "10.10.10.0/24"
-            subnet_region         = "us-central1"
+            subnet_region         = var.region
         },
         {
             subnet_name           = "subnet-02"
             subnet_ip             = "10.10.20.0/24"
-            subnet_region         = "us-central1"
+            subnet_region         = var.region
         },
         {
             subnet_name               = "subnet-03"
             subnet_ip                 = "10.10.30.0/24"
-            subnet_region             = "us-central1"
+            subnet_region             = var.region
         }
     ]
     depends_on = [module.vpc]
@@ -50,4 +50,9 @@ module "cloudsql" {
   allowed_ip    = module.gce.vm_public_ip
 }
 
-
+module "gke" {
+  source = "./modules/gke"
+  project_id = var.project_id
+  cluster_name = "gke-cluster-dev"
+  location = var.region
+}
