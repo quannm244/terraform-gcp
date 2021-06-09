@@ -7,11 +7,11 @@ terraform {
   }
 }
 
-module "gce" {
-  source        = "./modules/gce"
-  instance_name = "new-instance"
-  network       = "default"
-}
+# module "gce" {
+#   source        = "./modules/gce"
+#   instance_name = "new-instance"
+#   network       = "default"
+# }
 
 module "vpc" {
   source       = "./modules/network/vpc"
@@ -44,15 +44,19 @@ module "subnets" {
     depends_on = [module.vpc]
 }
 
-module "cloudsql" {
-  source        = "./modules/cloudsql"
-  instance_name = "test-dbinstance"
-  allowed_ip    = module.gce.vm_public_ip
-}
+#   module "cloudsql" {
+#   source        = "./modules/cloudsql"
+#   instance_name = "test-dbinstance"
+#   allowed_ip    = module.gce.vm_public_ip
+# }
 
 module "gke" {
   source = "./modules/gke"
   project_id = var.project_id
   cluster_name = "gke-cluster-dev"
   location = var.region
+  node_count = 2
+  # max_pods_per_node = 100
+  horizontal_pod_autoscaling = true
+  http_load_balancing = true
 }
